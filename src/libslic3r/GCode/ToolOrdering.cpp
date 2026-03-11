@@ -1221,7 +1221,10 @@ void ToolOrdering::reorder_extruders_for_minimum_flush_volume(bool reorder_first
     const unsigned int number_of_extruders = (unsigned int)(print_config->filament_colour.values.size() + EPSILON);
 
     using FlushMatrix = std::vector<std::vector<float>>;
+	// nozzle_nums: number of physical nozzles/toolheads on the printer (e.g. 1 for a Voron with MMU, 2 for a BBL dual nozzle)
+	// use this where the intent is to check physical extruder count.
     size_t             nozzle_nums = print_config->nozzle_diameter.values.size();
+	// (not to be confused with number_of_extruders above, which counts filaments/materials, not hardware)
 
     std::vector<FlushMatrix> nozzle_flush_mtx;
     for (size_t nozzle_id = 0; nozzle_id < nozzle_nums; ++nozzle_id) {
@@ -1321,7 +1324,7 @@ void ToolOrdering::reorder_extruders_for_minimum_flush_volume(bool reorder_first
         return false;
         };
 
-    if (m_print->is_BBL_printer() || number_of_extruders == 1){
+    if (m_print->is_BBL_printer() || nozzle_nums == 1){
     reorder_filaments_for_minimum_flush_volume(
         filament_lists,
         filament_maps,
